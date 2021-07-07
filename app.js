@@ -12,7 +12,7 @@ app.use(express.static('public'));
 app.use(helmet()); 
 app.use(logger);
 
-// $env:app_password="12345" 
+
 
 //Configuration
 console.log(`Application Name: ${config.get('name')}`);
