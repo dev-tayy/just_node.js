@@ -58,10 +58,10 @@ const Course = mongoose.model('Course', coursesSchema);
 async function createDatabase() {
 
     const course = new Course({
-        name: 'Angular.js Course',
-        author: 'Mosh',
+        name: 'Flutter Course',
+        author: 'Angela Yu',
         category: 'web',
-        tags: null,
+        tags: ['mobile', 'frontend'],
         isPublished: true,
         price: 15
     });
@@ -92,3 +92,5 @@ async function getCourses() {
     console.log(courses);
 }
 //getCourses();
+
+//add two numbers together
