@@ -4,11 +4,12 @@ const Joi = require("joi");
 function validateData(data) {
     //Validate the incoming request
     const schema = Joi.object({
-        name: Joi.string().min(3).required(),
+        name: Joi.string().min(3).max(50).required(),
         phone: Joi.string().min(11).max(12).required(),
+        isGold: Joi.boolean()
     });
 
     return schema.validate(data);
 }
 
-module.exports = {validateData};
+module.exports.validate = validateData;

@@ -1,24 +1,27 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const {
-    validateData
-} = require("../routes/joi_validation");
+const {validate} = require("../routes/joi_validation");
+const mongodb = require("mongodb");
 
 const customerSchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
-        minlength: 5,
+        minlength: 3,
         maxlength: 50
     },
     isGold: {
         type: Boolean,
         required: true,
+        default: false
     },
     phone: {
         type: String,
         required: true,
+        minlength: 11,
+        maxlength: 12
+
     },
 });
 
@@ -32,7 +35,13 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
+    var objectId = mongodb.ObjectId.isValid(req.params.id);
+    console.log(objectId);
+
+    if (!objectId) return res.status(400).send("Bad Request: ID is not valid");
+
     const customer = await Customer.findById(req.params.id);
+    console.log(customer);
 
     if (!customer)
         return res.status(404).send("The customer you dey find no dey available boss");
@@ -46,11 +55,13 @@ router.post("/", async (req, res) => {
     //Input Validation
     const {
         error
-    } = validateData(req.body);
+    } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
     let customer = new Customer({
         name: req.body.name,
+        phone: req.body.phone,
+        isGold: req.body.isGold
     });
 
     customer = await customer.save();
@@ -60,18 +71,26 @@ router.post("/", async (req, res) => {
 
 //PUT REQUEST
 router.put("/:id", async (req, res) => {
-    //Input Validation
+    var objectId = mongodb.ObjectId.isValid(req.params.id);
+    console.log(objectId);
+
+    if (!objectId) return res.status(400).send("Bad Request: ID is not valid");
+
     const {
         error
-    } = validateData(req.body);
+    } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
     const customer = await Customer.findByIdAndUpdate(req.params.id, {
-        name: req.body.name
+        name: req.body.name,
+        phone: req.body.phone,
+        isGold: req.body.isGold
+
     }, {
         new: true
     });
     console.log(customer);
+
     if (!customer) return res.status(404).send("The customer with the given ID does not exist.");
 
     res.send(customer);
@@ -80,8 +99,12 @@ router.put("/:id", async (req, res) => {
 
 //DELETE REQUEST
 router.delete("/:id", async (req, res) => {
-    const customer = await Customer.findByIdAndRemove(req.params.id);
+    var objectId = mongodb.ObjectId.isValid(req.params.id);
+    console.log(objectId);
 
+    if (!objectId) return res.status(400).send("Bad Request: ID is not valid");
+
+    const customer = await Customer.findByIdAndRemove(req.params.id);
     if (!customer)
         return res
             .status(404)

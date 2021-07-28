@@ -43,7 +43,7 @@ router.get("/:id", async (req, res) => {
     if (!genre)
         return res.status(404).send("The genre you dey find no dey available boss");
 
-    res.send(genre)
+    res.send(genre);
 });
 
 
