@@ -2,6 +2,7 @@ const express = require("express");
 const Joi = require("joi");
 const router = express.Router();
 const mongoose = require("mongoose");
+const mongodb = require("mongodb");
 
 const genreSchema = mongoose.Schema({
     name: {
@@ -31,12 +32,18 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
+    var objectId = mongodb.ObjectId.isValid(req.params.id);
+    console.log(objectId);
+
+    if (!objectId) return res.status(400).send("Bad Request: ID is not valid");
+
     const genre = await Genre.findById(req.params.id);
+    console.log(genre);
 
     if (!genre)
         return res.status(404).send("The genre you dey find no dey available boss");
-        
-    res.send(genre);
+
+    res.send(genre)
 });
 
 
@@ -59,7 +66,11 @@ router.post("/", async (req, res) => {
 
 //PUT REQUEST
 router.put("/:id", async (req, res) => {
-    //Input Validation
+    var objectId = mongodb.ObjectId.isValid(req.params.id);
+    console.log(objectId);
+
+    if (!objectId) return res.status(400).send("Bad Request: ID is not valid");
+
     const {
         error
     } = validateGenre(req.body);
@@ -71,6 +82,7 @@ router.put("/:id", async (req, res) => {
         new: true
     });
     console.log(genre);
+
     if (!genre) return res.status(404).send("The genre with the given ID does not exist.");
 
     res.send(genre);
@@ -79,8 +91,12 @@ router.put("/:id", async (req, res) => {
 
 //DELETE REQUEST
 router.delete("/:id", async (req, res) => {
-    const genre = await Genre.findByIdAndRemove(req.params.id);
+    var objectId = mongodb.ObjectId.isValid(req.params.id);
+    console.log(objectId);
 
+    if (!objectId) return res.status(400).send("Bad Request: ID is not valid");
+
+    const genre = await Genre.findByIdAndRemove(req.params.id);
     if (!genre)
         return res
             .status(404)
