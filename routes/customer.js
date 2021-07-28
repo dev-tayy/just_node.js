@@ -1,31 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
-const {validate} = require("../routes/joi_validation");
+const {validate} = require("../utils/joi_validation");
 const mongodb = require("mongodb");
-
-const customerSchema = mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        minlength: 3,
-        maxlength: 50
-    },
-    isGold: {
-        type: Boolean,
-        required: true,
-        default: false
-    },
-    phone: {
-        type: String,
-        required: true,
-        minlength: 11,
-        maxlength: 12
-
-    },
-});
-
-const Customer = mongoose.model("Customer", customerSchema);
+const Customer = require("../models/customers");
 
 
 //GET REQUESTS
